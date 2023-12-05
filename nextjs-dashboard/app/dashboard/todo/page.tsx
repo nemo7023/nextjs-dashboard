@@ -1,9 +1,11 @@
 'use client';
 import useSWR, { mutate } from 'swr';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Modal from './components/modal';
 import Link from 'next/link';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 type SearchParamProps = {
   searchParams: Record<string, string> | null | undefined;
 };
@@ -25,6 +27,11 @@ export default function Page({ searchParams }: SearchParamProps) {
   // todo 추가
   const addTodo = async () => {
     try {
+      if (!newTodo.trim()) {
+        // 값이 비어 있을 때 토스트 표시
+        toast.error('할 일을 입력하세요!');
+        return;
+      }
       await fetch('http://127.0.0.1:8000/tasks/create', {
         method: 'POST',
         headers: {
@@ -95,6 +102,8 @@ export default function Page({ searchParams }: SearchParamProps) {
               >
                 Add
               </button>
+              {/* 토스트 컨테이너 */}
+              <ToastContainer />
             </div>
           </div>
           <div>
