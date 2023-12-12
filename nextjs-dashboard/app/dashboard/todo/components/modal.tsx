@@ -9,9 +9,13 @@ interface Props {
   create_date: string;
 }
 export default function Modal(props: Props) {
-  const [newTodo, setNewTodo] = useState(props.task);
+  const [newTodo, setNewTodo] = useState(props.task || '');
   const currentDate = new Date();
   const formattedDateTime = currentDate.toISOString();
+
+  useEffect(() => {
+    setNewTodo(props.task || '');
+  }, [props.task]);
 
   const updateTodo = async (id: any) => {
     try {

@@ -12,6 +12,11 @@ type SearchParamProps = {
 
 export default function Page({ searchParams }: SearchParamProps) {
   const [newTodo, setNewTodo] = useState('');
+  const [selectedTodo, setSelectedTodo] = useState<{
+    id: string;
+    task: string;
+    create_date: string;
+  } | null>(null);
   const currentDate = new Date();
   const formattedDateTime = currentDate.toISOString();
   const id = Date.parse(formattedDateTime).toString();
@@ -78,6 +83,21 @@ export default function Page({ searchParams }: SearchParamProps) {
     }
   };
 
+  const selectTodo = async (id: any) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/tasks/${id}`, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setSelectedTodo(data);
+    } catch (error) {
+      console.error('Error selecting todo:', error);
+    }
+  };
+
   if (error) return <div>failed to load</div>;
   if (isLoading) return <div>loading...</div>;
 
@@ -109,18 +129,21 @@ export default function Page({ searchParams }: SearchParamProps) {
           <div>
             {todos.map((todo: any) => (
               <div
-                className="flex cursor-pointer items-center justify-between border-t p-3 "
+                className="flex cursor-pointer items-center justify-between border-t p-3  "
                 key={todo.id}
               >
-                <div className="flex items-center">
+                <div className="flex items-center  overflow-hidden whitespace-normal">
                   <div className="ml-2 flex flex-col">
-                    <div className="text-sm font-bold leading-snug text-gray-900">
+                    <div className=" text-sm font-bold leading-snug text-gray-900">
                       {todo.task}
                     </div>
                   </div>
                 </div>
-                <div>
-                  <button className="text-md ml-1 h-8 rounded-full border border-blue-400 px-3 font-bold text-blue-400 hover:bg-blue-100 ">
+                <div className="ml-2 flex ">
+                  <button
+                    className="text-md ml-1 h-8 rounded-full border border-blue-400 px-3 font-bold text-blue-400 hover:bg-blue-100 "
+                    onClick={() => selectTodo(todo.id)}
+                  >
                     <Link href="/dashboard/todo/?show=true">Edit</Link>
                   </button>
 
@@ -131,7 +154,7 @@ export default function Page({ searchParams }: SearchParamProps) {
                     Delete
                   </button>
 
-                  {show && <Modal {...todo} />}
+                  {selectedTodo && show && <Modal {...selectedTodo} />}
                 </div>
               </div>
             ))}
