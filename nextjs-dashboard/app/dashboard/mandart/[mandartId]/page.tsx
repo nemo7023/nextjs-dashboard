@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Card from '@/app/ui/mandarat/card';
 
-export default function Page({ params }: { params: { mandartId: string } }) {
+export default function Page() {
   return (
     <div className=" grid grid-cols-3 items-center  justify-center gap-4">
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((sectionId) => (
